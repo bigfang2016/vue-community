@@ -3,6 +3,7 @@
       <router-view name="Header"></router-view>
       <router-view name="Content"></router-view>
       <router-view name="Footer"></router-view>
+      <router-view></router-view>
   </div>
 </template>
 

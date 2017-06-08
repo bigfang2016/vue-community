@@ -56,6 +56,8 @@ export default {
 <style scoped>
   .mu-appbar{
     border-bottom: solid 1px rgb(83,163,157);
+    position: fixed;
+    top: 0;
   }
   .logo {
       height: 45px;
