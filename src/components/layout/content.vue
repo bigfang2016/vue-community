@@ -74,6 +74,7 @@ export default {
     },
     //请求数据
     getDataByGet() {
+      this.page = 1
       this.$http
           .get('https://www.vue-js.com/api/v1/topics',{params:{tab:this.activeTab,page:this.page}})
           .then(
@@ -90,11 +91,23 @@ export default {
             });
     },
     loadMore() {
-      console.log(hahhh)
+      console.log('hahhh')
       this.loading = true
       setTimeout(() => {
         this.page += 1
-        this.getDataByGet()
+        this.$http
+            .get('https://www.vue-js.com/api/v1/topics',{params:{tab:this.activeTab,page:this.page}})
+            .then(
+              res => {
+                let arr = res.data.data
+                let len = arr.length
+                for(let i = 0; i < len; i++){
+                  this.msgArr.push(arr[i])
+                }
+              },
+              err => {
+                console.log(err)
+              });
 
         this.loading = false
       }, 2000)
@@ -115,9 +128,6 @@ export default {
   .mu-list{
     margin-top: 104px;
     margin-bottom: 47px;
-  }
-  .mu-list:last-child{
-
   }
   .mu-list{
     text-align: left;
@@ -154,5 +164,8 @@ export default {
   }
   .link{
     color: rgb(44,62,80);
+  }
+  .mu-infinite-scroll .mu-circle-wrapper{
+    display: inline-block;
   }
 </style>
