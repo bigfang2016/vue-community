@@ -1,8 +1,8 @@
 <template lang="html">
   <div class="">
     <!-- 顶部 -->
-    <mu-appbar :title="msg.loginname">
-      <mu-icon-button @click="goBack" icon="keyboard_backspace" slot="left"/>
+    <mu-appbar title="个人中心">
+      <!-- <mu-icon-button @click="goBack" icon="keyboard_backspace" slot="left"/> -->
     </mu-appbar>
     <!-- 用户信息 -->
     <mu-list class="author">
@@ -72,12 +72,22 @@
         </template>
       </mu-list>
     </div>
+    <mu-raised-button
+      @click="logout"
+      label="退出登录"
+      class="logout-button"
+      icon="power_settings_new"
+      primary/>
+    <personal></personal>
   </div>
+
 </template>
 
 <script>
 import timeago from 'timeago.js'
+import Personal from './layout/footer'
 export default {
+  components:{Personal},
   data () {
     return {
       msg: {},
@@ -101,20 +111,20 @@ export default {
     //请求数据
     getDataByGet() {
       let that = this
-      let author_loginname = that.$route.query.user//从content.vue的router-link获取
+
+      let author_loginname = localStorage.getItem('loginname')
       let url = 'https://www.vue-js.com/api/v1/user/'+ author_loginname
       this.$http
           .get(url)
           .then(
             res => {
-              // this.msg = {}
               this.msg = res.data.data
             },
             err => {
               console.log(err)
             });
     },
-    goBack() {
+    logout() {
       this.$router.go(-1)
     }
   }
@@ -123,7 +133,7 @@ export default {
 
 <style scoped>
   .mu-appbar{
-    text-align: left;
+    text-align: center;
     position: fixed;
     top: 0;
   }
@@ -186,5 +196,12 @@ export default {
   }
   .link{
     color: rgb(44,62,80);
+  }
+
+  .logout-button{
+    width: 100%;
+    position: fixed;
+    bottom: 56px;
+    right: 0;
   }
 </style>

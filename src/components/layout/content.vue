@@ -9,7 +9,7 @@
     <mu-tab value="job" title="招聘" />
   </mu-tabs>
 
-  <mu-list>
+  <mu-list ref="scrollfile" class="scrollheight">
     <template v-for="(val,index) in msgArr">
       <div class="list clearfix">
         <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
@@ -17,7 +17,7 @@
             <img class="author" :src="val.author.avatar_url" alt="">
           </div>
         </router-link>
-        <router-link :to="{name:'details'}" class="link">
+        <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
           <div class="list-right">
             <span v-if="val.top" class="table">置顶</span>
             <span v-else-if="val.good" class="table">精华</span>
@@ -26,7 +26,7 @@
             <span v-else-if="val.tab === 'job'" class="table" style="background:#999">招聘</span>
             <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
             <p class="count">
-              <span><span style="color: rgba(158, 120, 192, 1);font-weight: 600;">{{val.reply_count}}</span>/ {{val.visit_count}}</span>
+              <span><span style="color: rgba(158, 120, 192, 1);font-weight: 600;">{{val.reply_count}}</span> / {{val.visit_count}}</span>
               <span class="date">{{val.last_reply_at | timeago}}</span>
             </p>
           </div>
@@ -58,6 +58,7 @@ export default {
   mounted () {
     this.scroller = this.$el
     console.log(this.scroller)
+    this.$refs.scrollfile.addEventListener('scroll', this.getscrollTop)
   },
   filters: {
     timeago(val) {
@@ -111,6 +112,9 @@ export default {
 
         this.loading = false
       }, 2000)
+    },
+    getscrollTop(){
+      let scroll = this.$refs.scrollfile.scrollTop
     }
 
   }
@@ -124,6 +128,9 @@ export default {
   .mu-tabs{
     position: fixed;
     top: 56px;
+  }
+  .scrollheight{
+    overflow-y: auto;
   }
   .mu-list{
     margin-top: 104px;
