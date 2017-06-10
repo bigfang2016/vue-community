@@ -2,18 +2,34 @@
   <div class="">
     <!-- 顶部 -->
     <mu-appbar title="话题详情">
-      <mu-icon-button @click="goBack" icon="keyboard_backspace" slot="center"/>
+      <mu-icon-button @click="goBack" icon="keyboard_backspace" slot="left"/>
     </mu-appbar>
     <!-- 用户信息 -->
-    <mu-list class="author">
-      <p>{{msg.title}}</p>
-        <!-- <p class="author-name">{{msg.author.loginname}}</p> -->
-        <p class="author-count">
-          <!-- <span>积分：{{msg.score}}</span> -->
-          <span>注册时间：{{msg.create_at | timeago}}</span>
-        </p>
-      <mu-divider inset class="author-inset"/>
+    <mu-list class="topic">
+        <span v-if="msg.top" class="table">置顶</span>
+        <span v-else-if="msg.good" class="table">精华</span>
+        <span v-else-if="msg.tab === 'share'" class="table" style="background:#999">分享</span>
+        <span v-else-if="msg.tab === 'ask'" class="table" style="background:#999">问答</span>
+        <span v-else-if="msg.tab === 'job'" class="table" style="background:#999">招聘</span>
+        <span class="topic-title">{{msg.title}}</span>
+
+        <ul class="topic-items">
+          <li class="topic-item">发布于 {{msg.create_at | timeago}}</li>
+          <li class="topic-item">作者{{msg.author.loginname}}</li>
+          <li class="topic-item">{{msg.visit_count}}次浏览</li>
+          <li class="topic-item">
+            <span>来自</span>
+            <span v-if="msg.tab === 'share'">分享</span>
+            <span v-else-if="msg.tab === 'ask'">问答</span>
+            <span v-else-if="msg.tab === 'job'">招聘</span>
+          </li>
+        </ul>
+      <mu-divider inset class="topic-inset"/>
+      <div class="topic-content">
+
+      </div>
     </mu-list>
+
 
 
   </div>
@@ -24,11 +40,16 @@ import timeago from 'timeago.js'
 export default {
   data () {
     return {
-      msg: {}
+      msg: {
+        author:{loginname:''}
+      },
+
     }
   },
   created() {
     this.getDataByGet()
+    console.log(this.msg);
+    // this.getInnerHTML()
   },
   filters: {
     timeago(val) {
@@ -37,6 +58,10 @@ export default {
         return thistime.format(time, 'zh_CN')
     }
   },
+  // mounted(){
+  //   this.getInnerHTML()
+  //   console.log(this.msg);
+  // },
   methods: {
     //请求数据
     getDataByGet() {
@@ -49,10 +74,15 @@ export default {
             res => {
               // this.msg = {}
               this.msg = res.data.data
+              this.getInnerHTML()
             },
             err => {
               console.log('err')
             });
+    },
+    getInnerHTML(){
+      let str = this.msg.content
+      document.querySelector(".topic-content").innerHTML = str
     },
     goBack() {
       this.$router.go(-1)
@@ -67,9 +97,101 @@ export default {
     position: fixed;
     top: 0;
   }
-  .author{
+  .topic{
     margin-top: 56px;
   }
+  .table{
+    background: #369219;
+    padding: 2px 4px;
+    color: #fff;
+    font-size: 12px;
+  }
+  .topic-title{
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .topic-inset{
+    margin-left: 0;
+  }
+  .topic-item{
+    display: inline-block;
+  }
+  .markdown-text h2{
+    padding-bottom: 10px;
+    margin-bottom: 1px solid black;
+  }
+  .topic-content {
+      padding: 1rem;
+      border-top: 1px solid #e5e5e5;
+      margin-bottom: 2rem;
+  }
+
+  .topic-content h1,
+  .topic-content h2,
+  .topic-content h3,
+  .topic-content h4,
+  .topic-content h5,
+  .topic-content h6 {
+      font-weight: 700;
+  }
+
+  .topic-content p {
+      font-size: 15px;
+      line-height: 1.7em;
+      overflow: auto;
+  }
+
+  .topic-content h2 {
+      font-size: 26px;
+      margin: 30px 0 15px;
+      border-bottom: 1px solid #eee;
+  }
+
+  .topic-content h3 {
+      margin: 30px 0 15px;
+      border-bottom: 1px solid #eee;
+      font-size: 24.5px;
+  }
+
+  .topic-content pre {
+      font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+      font-size: 14px;
+      border-radius: 0;
+      padding: 1rem;
+      border: 0;
+      margin: 1rem 0;
+      border-width: 1px 0;
+      background: #f7f7f7;
+  }
+
+  .topic-content ul {
+      list-style-type: disc;
+      margin: 0 0 1rem 2rem;
+  }
+
+  .topic-content ol {
+      list-style: decimal;
+      margin-left: 2em;
+  }
+
+  .topic-content li {
+      line-height: 2.5rem;
+  }
+
+  .topic-content a {
+      display: block;
+  }
+
+  .topic-content img {
+      height: auto;
+      max-width: 100%;
+      vertical-align: middle;
+      border: 0;
+  }
+  /*ul{
+    list-style: disc;
+  }*/
+  /*
   .author-img{
     width: 40px;
     height:40px;
@@ -126,5 +248,5 @@ export default {
   }
   .link{
     color: rgb(44,62,80);
-  }
+  }*/
 </style>

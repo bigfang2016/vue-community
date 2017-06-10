@@ -27,13 +27,31 @@ export default {
   components:{Personal},
   data () {
     return {
-      activeTab: 'tab1'
+      activeTab: 'tab1',
+      loginkey:''
     }
+  },
+  created(){
+    this.getDataByGet()
   },
   methods: {
     handleTabChange (val) {
       this.activeTab = val
-    }
+    },
+    getDataByGet() {
+      let that = this
+      this.loginkey = localStorage.getItem('accesstoken')      
+      this.$http
+          .get('https://www.vue-js.com/api/v1/message',{params:{accesstoken:this.loginkey}})
+          .then(
+            res => {
+              this.msg = res.data.data
+            },
+            err => {
+              console.log(err)
+              that.$router.push({path:'/login'})
+            });
+    },
   }
 }
 </script>

@@ -1,9 +1,7 @@
 <template lang="html">
   <div class="">
     <!-- 顶部 -->
-    <mu-appbar title="个人中心">
-      <!-- <mu-icon-button @click="goBack" icon="keyboard_backspace" slot="left"/> -->
-    </mu-appbar>
+    <mu-appbar title="个人中心"></mu-appbar>
     <!-- 用户信息 -->
     <mu-list class="author">
         <img class="author-img" :src="msg.avatar_url" alt="">
@@ -21,7 +19,7 @@
       <mu-tab value="tab3" title="收藏话题" class="tab" />
     </mu-tabs>
     <div v-if="activeTab === 'tab1'">
-      <mu-list>
+      <mu-list class="recent-active">
         <template v-for="(val,index) in msg.recent_topics">
           <div class="list clearfix">
               <div class="list-left">
@@ -32,12 +30,13 @@
                 <span class="date">{{val.last_reply_at | timeago}}</span>
               </div>
           </div>
+
           <mu-divider inset/>
         </template>
       </mu-list>
     </div>
     <div v-if="activeTab === 'tab2'">
-        <mu-list>
+        <mu-list class="recent-active">
           <template v-for="(val,index) in msg.recent_replies">
             <div class="list clearfix">
               <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
@@ -57,7 +56,7 @@
         </mu-list>
     </div>
     <div v-if="activeTab === 'tab3'">
-      <mu-list>
+      <mu-list class="recent-active">
         <template v-for="(val,index) in msg.collect_topics">
           <div class="list clearfix">
               <div class="list-left">
@@ -87,7 +86,9 @@
 import timeago from 'timeago.js'
 import Personal from './layout/footer'
 export default {
-  components:{Personal},
+  components:{
+    Personal
+  },
   data () {
     return {
       msg: {},
@@ -125,7 +126,9 @@ export default {
             });
     },
     logout() {
-      this.$router.go(-1)
+      //将存储在localStorage里的口令清空
+      localStorage.setItem('accesstoken','')
+      this.$router.push({path:'/login'})
     }
   }
 }
@@ -136,6 +139,7 @@ export default {
     text-align: center;
     position: fixed;
     top: 0;
+    z-index: 4;
   }
   .author{
     margin-top: 56px;
@@ -172,6 +176,9 @@ export default {
   }
   .tabs .mu-tab-link-highlight{
     background-color: #009688;
+  }
+  .recent-active{
+    margin-bottom: 84px;
   }
   .list{
     padding: 10px;
