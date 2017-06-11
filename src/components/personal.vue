@@ -34,6 +34,7 @@
           <mu-divider inset/>
         </template>
       </mu-list>
+      <span v-if="!msg.recent_topics.length">暂无话题</span>
     </div>
     <div v-if="activeTab === 'tab2'">
         <mu-list class="recent-active">
@@ -54,6 +55,7 @@
             <mu-divider inset/>
           </template>
         </mu-list>
+        <span v-if="!msg.recent_replies.length">暂无回复</span>
     </div>
     <div v-if="activeTab === 'tab3'">
       <mu-list class="recent-active">
@@ -70,6 +72,7 @@
           <mu-divider inset/>
         </template>
       </mu-list>
+      <span v-if="!msg.collect_topics.length">暂无收藏</span>
     </div>
     <mu-raised-button
       @click="logout"
