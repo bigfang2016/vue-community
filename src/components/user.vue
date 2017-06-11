@@ -24,17 +24,22 @@
       <mu-list>
         <template v-for="(val,index) in msg.recent_topics">
           <div class="list clearfix">
-              <div class="list-left">
-                <img class="author-img" :src="val.author.avatar_url" alt="">
-              </div>
-              <div class="list-right">
-                <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
-                <span class="date">{{val.last_reply_at | timeago}}</span>
-              </div>
+              <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
+                <div class="list-left">
+                  <img class="author-img" :src="val.author.avatar_url" alt="">
+                </div>
+              </router-link>
+              <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
+                <div class="list-right">
+                  <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
+                  <span class="date">{{val.last_reply_at | timeago}}</span>
+                </div>
+              </router-link>
           </div>
           <mu-divider inset/>
         </template>
       </mu-list>
+      <p v-if="!msg.recent_topics.length">暂无话题</p>
     </div>
     <div v-if="activeTab === 'tab2'">
         <mu-list>
@@ -45,7 +50,7 @@
                   <img class="author-img" :src="val.author.avatar_url" alt="">
                 </div>
               </router-link>
-              <router-link :to="{name:'details'}" class="link">
+              <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
                 <div class="list-right">
                   <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
                   <span class="date">{{val.last_reply_at | timeago}}</span>
@@ -55,22 +60,28 @@
             <mu-divider inset/>
           </template>
         </mu-list>
+        <p v-if="!msg.recent_replies.length">暂无回复</p>
     </div>
     <div v-if="activeTab === 'tab3'">
       <mu-list>
         <template v-for="(val,index) in msg.collect_topics">
           <div class="list clearfix">
-              <div class="list-left">
-                <img class="author-img" :src="val.author.avatar_url" alt="">
-              </div>
-              <div class="list-right">
-                <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
-                <span class="date">{{val.last_reply_at | timeago}}</span>
-              </div>
+              <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
+                <div class="list-left">
+                  <img class="author-img" :src="val.author.avatar_url" alt="">
+                </div>
+              </router-link>
+              <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
+                <div class="list-right">
+                  <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
+                  <span class="date">{{val.last_reply_at | timeago}}</span>
+                </div>
+              </router-link>
           </div>
           <mu-divider inset/>
         </template>
       </mu-list>
+      <p v-if="!msg.collect_topics.length">暂无收藏</p>
     </div>
   </div>
 </template>
@@ -116,6 +127,7 @@ export default {
     },
     goBack() {
       this.$router.go(-1)
+      // this.$router.push("/") //不能这样写，因为当你在消息栏目里点击后，直接跳转到首页
     }
   }
 }

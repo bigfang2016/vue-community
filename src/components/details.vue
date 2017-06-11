@@ -24,6 +24,9 @@
             <span v-else-if="msg.tab === 'job'">招聘</span>
           </li>
         </ul>
+        <!-- 收藏 -->
+        <mu-checkbox :label="collect_text" class="demo-checkbox" uncheckIcon="favorite_border" checkedIcon="favorite" v-model="collect"/> <br/>
+        <!-- <mu-raised-button  class="demo-raised-button" :icon="collect_icon" /> -->
       <mu-divider inset class="topic-inset"/>
       <div class="topic-content">
 
@@ -43,13 +46,30 @@ export default {
       msg: {
         author:{loginname:''}
       },
+      accesstoken: '',
+      loginname:'',//储存登录者的用户名
+      collect_text:'收藏话题',
+      collect: false
 
     }
   },
   created() {
+    this.accesstoken = localStorage.getItem('accesstoken')
+    this.user_id = localStorage.getItem("user_id")
+    this.loginname = localStorage.getItem("loginname")
     this.getDataByGet()
     console.log(this.msg);
     // this.getInnerHTML()
+  },
+  //实时监测collect值的变化
+  watch: {
+      collect: function(newVal) {
+          if (newVal) {
+              this.toCollect()
+          } else {
+              this.deCollect()
+          }
+      }
   },
   filters: {
     timeago(val) {
@@ -75,6 +95,9 @@ export default {
               // this.msg = {}
               this.msg = res.data.data
               this.getInnerHTML()
+              if(this.accesstoken){
+                  this.isCollected()
+              }
             },
             err => {
               console.log('err')
@@ -86,6 +109,51 @@ export default {
     },
     goBack() {
       this.$router.go(-1)
+    },
+    isCollected(){
+
+      let that = this
+      this.$http
+          .get('https://www.vue-js.com/api/v1/user/'+ that.loginname)
+          .then(
+            res => {
+              let arr = res.data.data.collect_topics
+              let collect_id = that.msg.id
+              // find() 方法返回数组中满足提供的测试函数的第一个元素的值
+              arr.find(function(){
+                if (collect_id === that.msg.id) {
+                  that.collect = true
+                  that.collect_text = '取消收藏'
+                }
+              })
+            },
+            err => {
+              console.log('err')
+            });
+    },
+    toCollect(){
+      let that = this
+      this.$http
+          .post('https://www.vue-js.com/api/v1/topic/collect', {accesstoken:that.accesstoken,topic_id:that.msg.id})
+          .then(
+            res => {
+              that.collect_text = '取消收藏'
+            },
+            err => {
+              console.log('err')
+            });
+    },
+    deCollect(){
+      let that = this
+      this.$http
+          .post('https://www.vue-js.com/api/v1/topic/de_collect', {accesstoken:that.accesstoken,topic_id:that.msg.id})
+          .then(
+            res => {
+              that.collect_text = '收藏话题'
+            },
+            err => {
+              console.log('err')
+            });
     }
   }
 }

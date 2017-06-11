@@ -11,13 +11,14 @@
       >
         <mu-menu-item title="LIGHT" value="light" />
         <mu-menu-item title="DARK" value="dark" />
-        <mu-menu-item title="CARBON" value="carbon" />
+        <mu-menu-item title="CARBON(DEFAULT)" value="carbon" />
         <mu-menu-item title="TEAL" value="teal" />
       </mu-icon-menu>
     </mu-appbar>
 </template>
 
 <script>
+// 动态的切换主题,需要依赖 webpack 的 raw-loader 加载器
 import light from '!raw-loader!muse-ui/dist/theme-default.css'
 import dark from '!raw-loader!muse-ui/dist/theme-dark.css'
 import carbon from '!raw-loader!muse-ui/dist/theme-carbon.css'
@@ -25,7 +26,7 @@ import teal from '!raw-loader!muse-ui/dist/theme-teal.css'
 export default {
     data() {
         return {
-            theme: 'teal',
+            theme: 'carbon',
             themes: {
                 light,
                 dark,

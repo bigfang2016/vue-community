@@ -12,7 +12,7 @@
             <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
               <div class="list-left">
                 <img class="author" :src="val.author.avatar_url" alt="">
-                <span>{{val.author.loginname}}</span>
+                <p>{{val.author.loginname}}</p>
               </div>
             </router-link>
             <router-link :to="{path:'/details', query:{id:val.topic.id}}" class="link">
@@ -41,7 +41,7 @@
             <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
               <div class="list-left">
                 <img class="author" :src="val.author.avatar_url" alt="">
-                <span>{{val.author.loginname}}</span>
+                <p>{{val.author.loginname}}</p>
               </div>
             </router-link>
             <router-link :to="{path:'/details', query:{id:val.topic.id}}" class="link">
@@ -160,6 +160,7 @@ export default {
   .list-right{
     float: right;
     width: 80%;
+    padding-left: 11px;
   }
   .list-right .count{
     display: flex;

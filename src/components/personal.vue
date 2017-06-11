@@ -22,13 +22,17 @@
       <mu-list class="recent-active">
         <template v-for="(val,index) in msg.recent_topics">
           <div class="list clearfix">
-              <div class="list-left">
-                <img class="author-img" :src="val.author.avatar_url" alt="">
-              </div>
-              <div class="list-right">
-                <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
-                <span class="date">{{val.last_reply_at | timeago}}</span>
-              </div>
+              <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
+                <div class="list-left">
+                  <img class="author-img" :src="val.author.avatar_url" alt="">
+                </div>
+              </router-link>
+              <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
+                <div class="list-right">
+                  <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
+                  <span class="date">{{val.last_reply_at | timeago}}</span>
+                </div>
+              </router-link>
           </div>
 
           <mu-divider inset/>
@@ -45,7 +49,7 @@
                   <img class="author-img" :src="val.author.avatar_url" alt="">
                 </div>
               </router-link>
-              <router-link :to="{name:'details'}" class="link">
+              <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
                 <div class="list-right">
                   <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
                   <span class="date">{{val.last_reply_at | timeago}}</span>
@@ -61,13 +65,17 @@
       <mu-list class="recent-active">
         <template v-for="(val,index) in msg.collect_topics">
           <div class="list clearfix">
+            <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
               <div class="list-left">
                 <img class="author-img" :src="val.author.avatar_url" alt="">
               </div>
+            </router-link>
+            <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
               <div class="list-right">
                 <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
                 <span class="date">{{val.last_reply_at | timeago}}</span>
               </div>
+            </router-link>
           </div>
           <mu-divider inset/>
         </template>
