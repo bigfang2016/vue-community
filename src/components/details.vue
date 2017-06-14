@@ -25,13 +25,63 @@
           </li>
         </ul>
         <!-- 收藏 -->
-        <mu-checkbox :label="collect_text" class="demo-checkbox" uncheckIcon="favorite_border" checkedIcon="favorite" v-model="collect"/> <br/>
+        <mu-checkbox v-if="accesstoken" :label="collect_text" class="demo-checkbox" uncheckIcon="favorite_border" checkedIcon="favorite" v-model="collect"/> <br/>
         <!-- <mu-raised-button  class="demo-raised-button" :icon="collect_icon" /> -->
       <mu-divider inset class="topic-inset"/>
-      <div class="topic-content">
-
-      </div>
+      <div class="topic-content"></div>
     </mu-list>
+      <!-- 评论区 -->
+      <ul v-if="msg.replies.length" class="replies">
+          <li>{{msg.replies.length}}条回复</li>
+          <li class="reply" v-for="(val,index) in msg.replies" :key="val.id">
+              <section class="msg">
+                  <div class="author">
+                      <router-link
+                      :to="{path:'/user',query:{user:val.author.loginname}}"
+                      :src="val.author.avatar_url"
+                      tag="img"
+                      alt="user">
+                      </router-link>
+                      <span class="name">{{val.author.loginname}}</span>
+                      <span class="timer">{{index+1}}楼 • {{val.create_at | timeago}}</span>
+                  </div>
+                  <!-- 未登录状态下点赞 -->
+                  <div @click="open" v-if="val.ups.length && !accesstoken" class="ups">
+                      <mu-icon value="thumb_up" :size="16" />
+                      <span>{{val.ups.length}}</span>
+                  </div>
+                  <!-- 登录状态下点赞 -->
+                  <div @click="open" v-if="accesstoken" class="ups">
+                      <mu-icon @click="like(index)" value="thumb_up" :size="16" />
+                      <span>{{val.ups.length}}</span>
+                      <mu-icon @click="changeReply(index)" class="textsms" value="reply" :size="22" />
+                  </div>
+              </section>
+              <p v-html="val.content"></p>
+              <div v-if="accesstoken" class="reply_show" v-show="val.reply_show">
+                  <textarea v-model="single_reply" class="reply" placeholder="请输入回复内容..." rows="5"></textarea>
+                  <mu-raised-button @click="single_reply_content(index)" label="回复" class="demo-raised-button" primary/>
+                  <mu-raised-button @click="exit_single_reply_content(index)" label="取消" class="demo-raised-button" primary/>
+              </div>
+          </li>
+      </ul>
+      <ul v-if="accesstoken" class="replies">
+          <li>添加回复</li>
+          <li>
+              <textarea v-model="reply" class="reply" placeholder="请输入回复内容..." rows="5"></textarea>
+              <mu-raised-button @click="reply_content" label="回复" class="demo-raised-button" primary/>
+          </li>
+      </ul>
+      <mu-dialog v-if="!accesstoken" :open="dialog" title="提示：" @close="close">
+          请先登录，登录后即可点赞。
+          <mu-flat-button slot="actions" @click="close" primary label="取消" />
+          <mu-flat-button to="/login" slot="actions" @click="close" primary label="确定" />
+      </mu-dialog>
+      <mu-dialog :open="isReply" title="提示：" @close="close">
+          {{tips}}
+          <mu-flat-button slot="actions" @click="close" primary label="确定" />
+      </mu-dialog>
+
 
 
 
@@ -39,17 +89,24 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import timeago from 'timeago.js'
 export default {
   data () {
     return {
       msg: {
-        author:{loginname:''}
+        author:{loginname:''},
+        replies:{}
       },
       accesstoken: '',
       loginname:'',//储存登录者的用户名
       collect_text:'收藏话题',
-      collect: false
+      collect: false,
+      dialog: false,
+      reply: '',
+      single_reply: '',
+      isReply: false,
+      tips: ''
 
     }
   },
@@ -66,8 +123,10 @@ export default {
       collect: function(newVal) {
           if (newVal) {
               this.toCollect()
+              this.collect_text = '取消收藏'
           } else {
               this.deCollect()
+              this.collect_text = '收藏主题'
           }
       }
   },
@@ -78,10 +137,6 @@ export default {
         return thistime.format(time, 'zh_CN')
     }
   },
-  // mounted(){
-  //   this.getInnerHTML()
-  //   console.log(this.msg);
-  // },
   methods: {
     //请求数据
     getDataByGet() {
@@ -95,13 +150,13 @@ export default {
               // this.msg = {}
               this.msg = res.data.data
               this.getInnerHTML()
-              if(this.accesstoken){
-                  this.isCollected()
-              }
             },
             err => {
               console.log('err')
             });
+      if(this.accesstoken){
+          this.isCollected()
+      }
     },
     getInnerHTML(){
       let str = this.msg.content
@@ -120,8 +175,8 @@ export default {
               let arr = res.data.data.collect_topics
               let collect_id = that.msg.id
               // find() 方法返回数组中满足提供的测试函数的第一个元素的值
-              arr.find(function(){
-                if (collect_id === that.msg.id) {
+              arr.find(function(item){
+                if (collect_id === item.id) {
                   that.collect = true
                   that.collect_text = '取消收藏'
                 }
@@ -137,7 +192,7 @@ export default {
           .post('https://www.vue-js.com/api/v1/topic/collect', {accesstoken:that.accesstoken,topic_id:that.msg.id})
           .then(
             res => {
-              that.collect_text = '取消收藏'
+              // that.collect_text = '取消收藏'
             },
             err => {
               console.log('err')
@@ -149,17 +204,111 @@ export default {
           .post('https://www.vue-js.com/api/v1/topic/de_collect', {accesstoken:that.accesstoken,topic_id:that.msg.id})
           .then(
             res => {
-              that.collect_text = '收藏话题'
+              // that.collect_text = '收藏话题'
             },
             err => {
               console.log('err')
             });
+    },
+    open() {
+        this.dialog = true
+    },
+    close() {
+        this.dialog = false
+        this.isReply = false
+    },
+    reply_content() {
+        // 添加评论
+        let id = this.$route.query.id
+        let that = this
+        this.$http
+            .post('https://www.vue-js.com/api/v1/topic/' + id + '/replies', {
+                accesstoken: that.accesstoken,
+                content: that.reply
+            })
+            .then(
+              res => {
+                that.tips = '回复成功！'
+                that.isReply = true
+                setTimeout(function() {
+                    that.isReply = false
+                }, 1500)
+                that.getDataByGet()
+                that.reply = ''
+            },
+            err => {
+              that.tips = '请输入回复内容...'
+              that.isReply = true
+              setTimeout(function() {
+                  that.isReply = false
+              }, 1500)
+          });
+    },
+    like(index) {
+        //点赞
+        let that = this
+        let reply_id = that.msg.replies[index].id
+        this.$http
+            .post('https://www.vue-js.com/api/v1/reply/' + reply_id + '/ups', {
+                accesstoken: that.accesstoken
+            })
+            .then(
+              res => {
+                // console.log(response.msg)
+                that.getDataByGet()
+            })
+    },
+    single_reply_content(index) {
+        // 对评论的回复
+        let id = this.$route.query.id
+        let that = this
+        this.$http
+            .post('https://www.vue-js.com/api/v1/topic/' + id + '/replies', {
+                accesstoken: that.accesstoken,
+                content: that.single_reply,
+                reply_id: that.msg.replies[index].id
+            })
+            .then(
+              res => {
+                that.tips = '回复成功！'
+                that.isReply = true
+                setTimeout(function() {
+                    that.isReply = false
+                }, 1500)
+                that.getDataByGet()
+                that.single_reply = ''
+            },
+            err => {
+                that.tips = '请输入回复内容...'
+                that.isReply = true
+                setTimeout(function() {
+                    that.isReply = false
+                }, 1500)
+            }
+          );
+
+    },
+    changeReply(index) {
+        //点击对评论进行回复
+        let arr = this.msg.replies
+        arr.map(function(item, i) {
+            index === i ? Vue.set(item, 'reply_show', true) : Vue.set(item, 'reply_show', false)
+        })
+
+        this.single_reply = '@' + this.msg.replies[index].author.loginname + ' '
+    },
+    exit_single_reply_content(index) {
+        //取消对评论的回复，清空内容
+        this.single_reply = ''
+        let arr = this.msg.replies
+        arr[index].reply_show = false
+        Vue.set(arr, index, arr[index])
     }
   }
 }
 </script>
 
-<style scoped>
+<style >
   .mu-appbar{
     text-align: left;
     position: fixed;
@@ -192,6 +341,7 @@ export default {
       padding: 1rem;
       border-top: 1px solid #e5e5e5;
       margin-bottom: 2rem;
+      text-align: left;
   }
 
   .topic-content h1,
@@ -256,65 +406,80 @@ export default {
       vertical-align: middle;
       border: 0;
   }
-  /*ul{
-    list-style: disc;
-  }*/
-  /*
-  .author-img{
-    width: 40px;
-    height:40px;
-    border-radius: 40px;
-  }
-  .author-name{
-    font-size: 22px;
-    color: #009688;
-    margin-bottom: 10px;
-  }
-  .author-count{
-    display: flex;
-    justify-content: space-around;
-  }
 
-  .mu-divider.inset{
-    margin-left: 0;
+  /*评论区样式*/
 
-  }
-  .author-inset{
-    margin-top: 20px;
-  }
+.replies>li {
+    padding: 1rem;
+    text-align: left;
+}
 
-  .tabs{
-    background: transparent;
-    border-bottom: 1px solid rgb(239,239,239);
-  }
-  .tab{
-    color: #000;
-  }
-  .tabs .mu-tab-link-highlight{
-    background-color: #009688;
-  }
-  .list{
-    padding: 10px;
-  }
-  .list-left{
-    float: left;
-    width: 20%;
-    text-align: center;
-  }
-  .list-right{
-    float: right;
-    width: 80%;
+.replies>li:first-child {
+    background-color: #f6f6f6;
+}
+
+.reply {
+    border-top: 1px solid #f0f0f0;
+}
+
+.reply>.msg {
     display: flex;
     justify-content: space-between;
-  }
-  .list-right .title{
-    text-align: left;
-    width: 75%;
-  }
-  .list-right .date{
-    width: 25%;
-  }
-  .link{
-    color: rgb(44,62,80);
-  }*/
+    padding-bottom: 1rem;
+}
+
+.reply>p {
+    margin-bottom: 2rem;
+}
+
+.author>img {
+    width: 3rem;
+    height: 3rem;
+    /*border-radius: 50%;*/
+    vertical-align: top;
+}
+
+.author>.name {
+    color: #666;
+    font-weight: 700;
+}
+
+.author>.timer {
+    color: #08c;
+    /*font-weight: 700;*/
+}
+
+.msg>.ups {
+    display: flex;
+    align-items: center;
+    color: #009688;
+}
+
+.ups>span {
+    margin-left: 0.5rem;
+}
+
+.reply {
+    width: 100%;
+}
+
+.textsms {
+    margin-left: 1rem;
+    color: #009688;
+    height: 24px;
+    font-size: 22px;
+}
+
+.reply_show {
+    animation: reply_show 1s ease;
+}
+
+@keyframes reply_show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 </style>

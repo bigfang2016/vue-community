@@ -5,6 +5,11 @@
       <mu-tab value="notread" title="未读消息"/>
       <mu-tab value="read" title="已读消息"/>
     </mu-tabs>
+    <mu-dialog :open="!loginkey" title="" >
+      请先登录
+      <mu-flat-button slot="actions" primary @click="toHome" label="取消"/>
+      <mu-flat-button slot="actions" primary @click="toLogin" label="确定"/>
+    </mu-dialog>
     <div v-if="activeTab === 'notread'">
       <mu-list ref="scrollfile" class="scrollheight">
         <template v-for="(val,index) in hasnot_read_messages">
@@ -83,12 +88,6 @@ export default {
   },
   created(){
     this.loginkey = localStorage.getItem('accesstoken')
-    if (this.loginkey) {
-      this.getDataByGet()
-    }else{
-      this.$router.push({path:'/login'})
-    }
-
   },
   filters: {
     timeago(val) {
@@ -125,6 +124,12 @@ export default {
               console.log(err)
             });
     },
+    toHome () {
+      this.$router.push({path:'/'})
+    },
+    toLogin () {
+      this.$router.push({path:'/login'})
+    }
   }
 }
 </script>
