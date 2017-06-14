@@ -58,7 +58,7 @@ export default {
   mounted () {
     this.scroller = this.$el
     console.log(this.scroller)
-    this.$refs.scrollfile.addEventListener('scroll', this.getscrollTop)
+    // this.$refs.scrollfile.addEventListener('scroll', this.getscrollTop)
   },
   filters: {
     timeago(val) {
