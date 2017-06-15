@@ -10,6 +10,7 @@ import Publish from '@/components/publish'
 import Message from '@/components/message'
 import Personal from '@/components/personal'
 import Login from '@/components/login'
+import All from '@/components/all'
 
 Vue.use(Router)
 
@@ -54,6 +55,11 @@ export default new Router({
         path: '/login',
         name: 'login',
         component: Login
+    },
+    {
+        path: '/all',
+        name: 'all',
+        component: All
     }
 
   ]

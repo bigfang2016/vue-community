@@ -1,43 +1,43 @@
 <template>
-<div class="content">
-  <mu-tabs :value="activeTab" @change="handleTabChange" >
-    <mu-tab value="all" title="全部" />
-    <mu-tab value="good" title="精华" />
-    <mu-tab value="weex" title="weex" />
-    <mu-tab value="share" title="分享" />
-    <mu-tab value="ask" title="问答" />
-    <mu-tab value="job" title="招聘" />
-  </mu-tabs>
+  <div class="content" ref="content" >
+    <mu-tabs :value="activeTab" @change="handleTabChange" >
+      <mu-tab value="all" title="全部" />
+      <mu-tab value="good" title="精华" />
+      <mu-tab value="weex" title="weex" />
+      <mu-tab value="share" title="分享" />
+      <mu-tab value="ask" title="问答" />
+      <mu-tab value="job" title="招聘" />
+    </mu-tabs>
 
-  <mu-list ref="scrollfile" class="scrollheight">
-    <template v-for="(val,index) in msgArr">
-      <div class="list clearfix">
-        <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
-          <div class="list-left">
-            <img class="author" :src="val.author.avatar_url" alt="">
-          </div>
-        </router-link>
-        <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
-          <div class="list-right">
-            <span v-if="val.top" class="table">置顶</span>
-            <span v-else-if="val.good" class="table">精华</span>
-            <span v-else-if="val.tab === 'share'" class="table" style="background:#999">分享</span>
-            <span v-else-if="val.tab === 'ask'" class="table" style="background:#999">问答</span>
-            <span v-else-if="val.tab === 'job'" class="table" style="background:#999">招聘</span>
-            <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
-            <p class="count">
-              <span><span style="color: rgba(158, 120, 192, 1);font-weight: 600;">{{val.reply_count}}</span> / {{val.visit_count}}</span>
-              <span class="date">{{val.last_reply_at | timeago}}</span>
-            </p>
-          </div>
-        </router-link>
-      </div>
-      <mu-divider inset/>
-    </template>
-
-  </mu-list>
-  <mu-infinite-scroll :scroller="scroller" :loading="loading" @load="loadMore" />
-</div>
+    <mu-list>
+      <template v-for="(val,index) in msgArr">
+        <div class="list clearfix">
+          <router-link :to="{path:'/user', query:{user:val.author.loginname}}" class="link">
+            <div class="list-left">
+              <img class="author" :src="val.author.avatar_url" alt="">
+            </div>
+          </router-link>
+          <router-link :to="{path:'/details', query:{id:val.id}}" class="link">
+            <div class="list-right">
+              <span v-if="val.top" class="table">置顶</span>
+              <span v-else-if="val.good" class="table">精华</span>
+              <span v-else-if="val.tab === 'share'" class="table" style="background:#999">分享</span>
+              <span v-else-if="val.tab === 'ask'" class="table" style="background:#999">问答</span>
+              <span v-else-if="val.tab === 'job'" class="table" style="background:#999">招聘</span>
+              <span class="title" style="font-size: 16px;font-weight:500;">{{val.title}}</span>
+              <p class="count">
+                <span><span style="color: rgba(158, 120, 192, 1);font-weight: 600;">{{val.reply_count}}</span> / {{val.visit_count}}</span>
+                <span class="date">{{val.last_reply_at | timeago}}</span>
+              </p>
+            </div>
+          </router-link>
+        </div>
+        <mu-divider inset/>
+      </template>
+      <p class="nomore" v-show="nomore">没有更多了。。。</p>
+    </mu-list>
+    <mu-infinite-scroll :scroller="scroller" :loading="loading" @load="loadMore" />
+  </div>
 </template>
 
 <script>
@@ -48,6 +48,7 @@ export default {
       activeTab: 'all',
       msgArr : [],
       page: 1,
+      nomore: false,
       loading: false,
       scroller: null
     }
@@ -56,9 +57,9 @@ export default {
     this.getDataByGet()
   },
   mounted () {
+    this.setContheight()
     this.scroller = this.$el
     console.log(this.scroller)
-    // this.$refs.scrollfile.addEventListener('scroll', this.getscrollTop)
   },
   filters: {
     timeago(val) {
@@ -67,56 +68,52 @@ export default {
         return thistime.format(time, 'zh_CN')
     }
   },
-
   methods: {
+      //每次切换 all/good/weex/share/ask/job 触发
     handleTabChange (val) {
       this.activeTab = val
+      this.msgArr = []
+      this.page = 1
+      this.nomore = false
+      this.loading = false
       this.getDataByGet()
     },
-    //请求数据
     getDataByGet() {
-      this.page = 1
       this.$http
           .get('https://www.vue-js.com/api/v1/topics',{params:{tab:this.activeTab,page:this.page}})
           .then(
             res => {
               let arr = res.data.data
               let len = arr.length
-              this.msgArr = []
+              if(!len){this.nomore = true}
               for(let i = 0; i < len; i++){
                 this.msgArr.push(arr[i])
               }
+              this.loading = false
             },
             err => {
               console.log(err)
+              this.loading = false
             });
     },
     loadMore() {
-      console.log('hahhh')
-      this.loading = true
-      setTimeout(() => {
-        this.page += 1
-        this.$http
-            .get('https://www.vue-js.com/api/v1/topics',{params:{tab:this.activeTab,page:this.page}})
-            .then(
-              res => {
-                let arr = res.data.data
-                let len = arr.length
-                for(let i = 0; i < len; i++){
-                  this.msgArr.push(arr[i])
-                }
-              },
-              err => {
-                console.log(err)
-              });
-
-        this.loading = false
-      }, 2000)
+        if(!this.nomore && !this.loading){
+              console.log('哈哈哈哈')
+              this.loading = true
+              this.page += 1
+              let that = this
+              setTimeout(() => {
+                that.getDataByGet()
+              }, 1000)
+        }
     },
-    getscrollTop(){
-      let scroll = this.$refs.scrollfile.scrollTop
+    //设置列表页面的高度
+    setContheight(){
+      let content = this.$refs.content;
+      let viewport_height = document.documentElement.clientHeight;
+      console.log(viewport_height);
+      content.style.height = viewport_height - 56 + 'px';
     }
-
   }
 }
 </script>
@@ -128,9 +125,6 @@ export default {
   .mu-tabs{
     position: fixed;
     top: 56px;
-  }
-  .scrollheight{
-    overflow-y: auto;
   }
   .mu-list{
     margin-top: 104px;
@@ -172,7 +166,10 @@ export default {
   .link{
     color: rgb(44,62,80);
   }
-  .mu-infinite-scroll .mu-circle-wrapper{
-    display: inline-block;
+  .nomore{
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      margin-top: 10px;
   }
 </style>

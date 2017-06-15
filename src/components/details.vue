@@ -419,7 +419,8 @@ export default {
 }
 
 .reply {
-    border-top: 1px solid #f0f0f0;
+    border: 1px solid #f0f0f0;
+    outline:none;
 }
 
 .reply>.msg {
