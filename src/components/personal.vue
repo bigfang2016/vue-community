@@ -97,10 +97,10 @@
 import timeago from 'timeago.js'
 import Personal from './layout/footer'
 export default {
-  components:{
+  components: {
     Personal
   },
-  data () {
+  data() {
     return {
       msg: {},
       activeTab: 'tab1'
@@ -111,115 +111,128 @@ export default {
   },
   filters: {
     timeago(val) {
-        let time = new Date(val)
-        var thistime = timeago()
-        return thistime.format(time, 'zh_CN')
+      let time = new Date(val)
+      var thistime = timeago()
+      return thistime.format(time, 'zh_CN')
     }
   },
   methods: {
-    handleTabChange (val) {
+    handleTabChange(val) {
       this.activeTab = val
     },
-    //请求数据
     getDataByGet() {
       let that = this
-
       let author_loginname = localStorage.getItem('loginname')
-      let url = 'https://www.vue-js.com/api/v1/user/'+ author_loginname
+      let url = 'https://www.vue-js.com/api/v1/user/' + author_loginname
       this.$http
-          .get(url)
-          .then(
-            res => {
-              this.msg = res.data.data
-            },
-            err => {
-              console.log(err)
-            });
+        .get(url)
+        .then(
+          res => {
+            this.msg = res.data.data
+          },
+          err => {
+            console.log(err)
+          });
     },
     logout() {
       //将存储在localStorage里的口令清空
-      localStorage.setItem('accesstoken','')
-      this.$router.push({path:'/login'})
+      localStorage.setItem('accesstoken', '')
+      this.$router.push({
+        path: '/login'
+      })
     }
   }
 }
 </script>
 
 <style scoped>
-  .mu-appbar{
-    text-align: center;
-    position: fixed;
-    top: 0;
-    z-index: 4;
-  }
-  .author{
-    margin-top: 56px;
-  }
-  .author-img{
-    width: 40px;
-    height:40px;
-    border-radius: 40px;
-  }
-  .author-name{
-    font-size: 22px;
-    color: #009688;
-    margin-bottom: 10px;
-  }
-  .author-count{
-    display: flex;
-    justify-content: space-around;
-  }
+.mu-appbar {
+  text-align: center;
+  position: fixed;
+  top: 0;
+  z-index: 4;
+}
 
-  .mu-divider.inset{
-    margin-left: 0;
+.author {
+  margin-top: 56px;
+}
 
-  }
-  .author-inset{
-    margin-top: 20px;
-  }
+.author-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+}
 
-  .tabs{
-    background: transparent;
-    border-bottom: 1px solid rgb(239,239,239);
-  }
-  .tab{
-    color: #000;
-  }
-  .tabs .mu-tab-link-highlight{
-    background-color: #009688;
-  }
-  .recent-active{
-    margin-bottom: 84px;
-  }
-  .list{
-    padding: 10px;
-  }
-  .list-left{
-    float: left;
-    width: 20%;
-    text-align: center;
-  }
-  .list-right{
-    float: right;
-    width: 80%;
-    display: flex;
-    justify-content: space-between;
-  }
-  .list-right .title{
-    text-align: left;
-    width: 75%;
-  }
-  .list-right .date{
-    width: 25%;
-  }
-  .link{
-    color: rgb(44,62,80);
-  }
+.author-name {
+  font-size: 22px;
+  color: #009688;
+  margin-bottom: 10px;
+}
 
-  .logout-button{
-    width: 100%;
-    position: fixed;
-    bottom: 56px;
-    right: 0;
-  }
+.author-count {
+  display: flex;
+  justify-content: space-around;
+}
+
+.mu-divider.inset {
+  margin-left: 0;
+}
+
+.author-inset {
+  margin-top: 20px;
+}
+
+.tabs {
+  background: transparent;
+  border-bottom: 1px solid rgb(239, 239, 239);
+}
+
+.tab {
+  color: #000;
+}
+
+.tabs .mu-tab-link-highlight {
+  background-color: #009688;
+}
+
+.recent-active {
+  margin-bottom: 84px;
+}
+
+.list {
+  padding: 10px;
+}
+
+.list-left {
+  float: left;
+  width: 20%;
+  text-align: center;
+}
+
+.list-right {
+  float: right;
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-right .title {
+  text-align: left;
+  width: 75%;
+}
+
+.list-right .date {
+  width: 25%;
+}
+
+.link {
+  color: rgb(44, 62, 80);
+}
+
+.logout-button {
+  width: 100%;
+  position: fixed;
+  bottom: 56px;
+  right: 0;
+}
 </style>

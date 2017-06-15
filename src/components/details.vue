@@ -81,10 +81,6 @@
           {{tips}}
           <mu-flat-button slot="actions" @click="close" primary label="确定" />
       </mu-dialog>
-
-
-
-
   </div>
 </template>
 
@@ -107,7 +103,6 @@ export default {
       single_reply: '',
       isReply: false,
       tips: ''
-
     }
   },
   created() {
@@ -115,7 +110,7 @@ export default {
     this.user_id = localStorage.getItem("user_id")
     this.loginname = localStorage.getItem("loginname")
     this.getDataByGet()
-    console.log(this.msg);
+    // console.log(this.msg);
     // this.getInnerHTML()
   },
   //实时监测collect值的变化
@@ -307,7 +302,7 @@ export default {
   }
 }
 </script>
-
+<!-- 此处样式设置全局是为了可以修改content引入的HTML样式 -->
 <style >
   .mu-appbar{
     text-align: left;

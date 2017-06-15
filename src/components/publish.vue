@@ -16,11 +16,8 @@
     <br/>
     <mu-text-field v-model="title" label="标题" hintText="标题字数10字以上"  class="title-input"/>
     <br/>
-    <!-- <mu-content-block> -->
-      <markdown-editor v-model="content" ref="markdownEditor" class="markdown-height"></markdown-editor>
-    <!-- </mu-content-block> -->
-
-
+    <!-- 内容区域，markdown格式 -->
+    <markdown-editor v-model="content" ref="markdownEditor" class="markdown-height" :configs="configs"></markdown-editor>
     <personal></personal>
   </div>
 </template>
@@ -29,7 +26,10 @@
 import Personal from './layout/footer'
 import { markdownEditor } from 'vue-simplemde'
 export default {
-  components:{Personal,markdownEditor},
+  components:{
+      Personal,
+      markdownEditor
+  },
   data () {
     return {
         game: 0,
@@ -40,13 +40,13 @@ export default {
         content: '',
         configs: {
           spellChecker: false, // 禁用拼写检查
-          // toolbar: ['heading','bold', 'italic',  '|', 'code', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', '|', 'guide'],
-          // toolbar:[{
-          //   name: 'code',
-          //   action: SimpleMDE.toggleCodeBlock,
-          //   className: 'fa fa-code',
-          //   title: '代码块'
-          // }]
+          initialValue: 'hellow', // 设置初始值
+          status: false, // 禁用底部状态栏
+          toolbar: ['heading','bold', 'italic',  '|', 'code', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', '|', 'guide'],
+          renderingConfig: {
+            codeSyntaxHighlighting: true, // 开启代码高亮
+            // highlightingTheme: 'atom-one-light' // 自定义代码高亮主题，可选列表(https://github.com/isagalaev/highlight.js/tree/master/src/styles)
+          }
         }
       }
   },
@@ -54,7 +54,7 @@ export default {
       this.accesstoken = localStorage.getItem("accesstoken")
   },
   mounted () {
-    this.getscroll()
+    this.setContheight()
   },
   methods:{
     goPublish(){
@@ -73,8 +73,6 @@ export default {
             res => {
               that.title = ''
               that.content = ''
-              // let arr = res.data.data
-
             },
             err => {
               console.log(err)
@@ -86,12 +84,15 @@ export default {
     toLogin () {
       this.$router.push({path:'/login'})
     },
-    getscrollTop(){
-      // let scroll = this.$refs.markdownEditor.scrollTop
-    },
-    getscroll(){
-      console.log(this.$refs.markdownEditor)
-      // this.$refs.markdownEditor.addEventListener('scroll', this.getscrollTop)
+    setContheight(){
+      let CodeMs = document.querySelector('.CodeMirror-scroll')
+      let CodeM = document.querySelector('.CodeMirror')
+      let viewport_height = document.documentElement.clientHeight;
+      console.log(viewport_height);
+      CodeMs.style.height = viewport_height - 384 +'px'
+      CodeMs.style.minHeight = viewport_height - 384 +'px'
+      CodeM.style.height = viewport_height - 362 +'px'
+      CodeM.style.minHeight = viewport_height - 362 +'px'
     }
   }
 }
@@ -118,15 +119,4 @@ export default {
     margin-right: 10px;
     width: 90%;
   }
-  /*.markdown-height{
-    max-height: 200px;
-    overflow-y: auto;
-  }*/
-  .markdown-editor .CodeMirror, .markdown-editor .CodeMirror-scroll {
-  height: 100px;
-  max-height: 100px;
-  min-height: 100px;
-  overflow-y: auto;
-  z-index: -1;
-}
 </style>

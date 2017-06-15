@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
 import Header from '@/components/layout/header'
 import Content from '@/components/layout/content'
 import Footer from '@/components/layout/footer'
@@ -10,7 +9,6 @@ import Publish from '@/components/publish'
 import Message from '@/components/message'
 import Personal from '@/components/personal'
 import Login from '@/components/login'
-import All from '@/components/all'
 
 Vue.use(Router)
 
@@ -55,11 +53,6 @@ export default new Router({
         path: '/login',
         name: 'login',
         component: Login
-    },
-    {
-        path: '/all',
-        name: 'all',
-        component: All
     }
 
   ]

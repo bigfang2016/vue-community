@@ -59,7 +59,7 @@ export default {
   mounted () {
     this.setContheight()
     this.scroller = this.$el
-    console.log(this.scroller)
+    // console.log(this.scroller)
   },
   filters: {
     timeago(val) {
@@ -98,7 +98,6 @@ export default {
     },
     loadMore() {
         if(!this.nomore && !this.loading){
-              console.log('哈哈哈哈')
               this.loading = true
               this.page += 1
               let that = this
@@ -111,7 +110,7 @@ export default {
     setContheight(){
       let content = this.$refs.content;
       let viewport_height = document.documentElement.clientHeight;
-      console.log(viewport_height);
+    //   console.log(viewport_height);
       content.style.height = viewport_height - 56 + 'px';
     }
   }

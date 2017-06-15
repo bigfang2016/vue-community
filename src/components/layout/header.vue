@@ -11,8 +11,8 @@
       >
         <mu-menu-item title="LIGHT" value="light" />
         <mu-menu-item title="DARK" value="dark" />
-        <mu-menu-item title="CARBON(DEFAULT)" value="carbon" />
-        <mu-menu-item title="TEAL" value="teal" />
+        <mu-menu-item title="CARBON" value="carbon" />
+        <mu-menu-item title="TEAL(DEFAULT)" value="teal" />
       </mu-icon-menu>
     </mu-appbar>
 </template>
@@ -26,7 +26,7 @@ import teal from '!raw-loader!muse-ui/dist/theme-teal.css'
 export default {
     data() {
         return {
-            theme: 'carbon',
+            theme: 'teal',
             themes: {
                 light,
                 dark,

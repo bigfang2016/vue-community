@@ -76,7 +76,9 @@
 import Personal from './layout/footer'
 import timeago from 'timeago.js'
 export default {
-  components:{Personal},
+  components:{
+      Personal
+  },
   data () {
     return {
       activeTab: 'notread',
