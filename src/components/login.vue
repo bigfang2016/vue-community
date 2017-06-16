@@ -3,8 +3,12 @@
     <mu-appbar title="登录中心"></mu-appbar>
     <mu-text-field label="Access Token" type="password" :errorText="err" errorColor="red" labelFloat class="text" v-model="loginkey"/><br/>
     <div class="container">
-        <mu-raised-button href="https://www.vue-js.com/signup" label="注册" class="sign-button" primary/>
+        <mu-raised-button href="https://www.vue-js.com/signup" label="注册" class="sign-button" />
         <mu-raised-button @click="login" label="登录" class="login-button" primary/>
+    </div>
+    <div @click="showDetails" class="tips">
+        <p>如何获取 Access Token ?</p>
+        <p v-show="details" class="detail">在<a href="https://www.vue-js.com/">官网</a>注册登录后，可在设置页查看 Access Token</p>
     </div>
 
     <personal></personal>
@@ -18,7 +22,8 @@ export default {
   data(){
     return {
       loginkey:'',
-      err:''
+      err:'',
+      details: false
     }
   },
   methods:{
@@ -39,6 +44,9 @@ export default {
               console.log('err')
               that.err = '登录口令输入有误,请重新输入'
             });
+    },
+    showDetails(){
+        this.details = !this.details
     }
   }
 }
@@ -53,12 +61,26 @@ export default {
   .text{
     margin-top: 50%;
   }
-  .login-button{
-     margin-left: 10px;
+  .sign-button, .login-button{
+     width: 70%;
+     margin-left: 15%;
+     margin-top: 5%;
   }
   .container{
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
+  }
+  .tips{
+      width: 80%;
+      margin-left: 10%;
+      text-align: left;
+      padding-top: 10%;
+  }
+  .detail{
+      color: rgb(158, 158, 158);
+      padding-left: 10px;
+      padding-top: 5%;
   }
 </style>
