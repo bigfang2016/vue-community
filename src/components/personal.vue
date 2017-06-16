@@ -82,12 +82,13 @@
       </mu-list>
       <span v-if="!msg.collect_topics.length">暂无收藏</span>
     </div>
-    <mu-raised-button
-      @click="logout"
-      label="退出登录"
-      class="logout-button"
-      icon="power_settings_new"
-      primary/>
+
+    <mu-raised-button @click="open" label="退出登录" class="logout-button" icon="power_settings_new" primary/>
+    <mu-dialog :open="dialog">
+      确定退出么？
+      <mu-flat-button slot="actions" @click="close" primary label="取消"/>
+      <mu-flat-button slot="actions" primary @click="logout" label="确定"/>
+    </mu-dialog>
     <personal></personal>
   </div>
 
@@ -103,7 +104,8 @@ export default {
   data() {
     return {
       msg: {},
-      activeTab: 'tab1'
+      activeTab: 'tab1',
+      dialog: false
     }
   },
   created() {
@@ -134,7 +136,14 @@ export default {
             console.log(err)
           });
     },
+    open () {
+      this.dialog = true
+    },
+    close () {
+      this.dialog = false
+    },
     logout() {
+      this.dialog = false
       //将存储在localStorage里的口令清空
       localStorage.setItem('accesstoken', '')
       this.$router.push({

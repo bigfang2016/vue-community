@@ -60,6 +60,9 @@ export default {
     position: fixed;
     top: 0;
   }
+  .mu-appbar .mu-appbar-title{
+      text-align: center;
+  }
   .logo {
       height: 45px;
   }
