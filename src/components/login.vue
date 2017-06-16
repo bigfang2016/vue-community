@@ -1,8 +1,11 @@
 <template lang="html">
   <div class="">
     <mu-appbar title="登录中心"></mu-appbar>
-    <mu-text-field label="Access Token" :errorText="err" errorColor="orange" labelFloat class="text" v-model="loginkey"/><br/>
-    <mu-raised-button @click="login" label="登录" class="login-button" primary/>
+    <mu-text-field label="Access Token" type="password" :errorText="err" errorColor="red" labelFloat class="text" v-model="loginkey"/><br/>
+    <div class="container">
+        <mu-raised-button href="https://www.vue-js.com/signup" label="注册" class="sign-button" primary/>
+        <mu-raised-button @click="login" label="登录" class="login-button" primary/>
+    </div>
 
     <personal></personal>
   </div>
@@ -48,6 +51,14 @@ export default {
     top: 0;
   }
   .text{
-    margin-top: 56px;
+    margin-top: 50%;
+  }
+  .login-button{
+     margin-left: 10px;
+  }
+  .container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 </style>
