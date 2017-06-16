@@ -17,8 +17,13 @@
     <mu-text-field v-model="title" label="标题" hintText="标题字数10字以上"  class="title-input"/>
     <br/>
     <!-- 内容区域，markdown格式 -->
-    <markdown-editor v-model="content" ref="markdownEditor" class="markdown-height" :configs="configs"></markdown-editor>
+    <markdown-editor v-model="content" ref="markdownEditor" class="markdown" :configs="configs"></markdown-editor>
     <personal></personal>
+    <!-- 判断是否发布成功 -->
+    <mu-dialog :open="success" title="" >
+      发布成功
+      <mu-flat-button slot="actions" primary @click="toHome" label="确定"/>
+    </mu-dialog>
   </div>
 </template>
 
@@ -38,9 +43,10 @@ export default {
         tab:'',
         title:'',
         content: '',
+        success: false,
         configs: {
           spellChecker: false, // 禁用拼写检查
-          initialValue: 'hellow', // 设置初始值
+        //   initialValue: 'hellow', // 设置初始值
           status: false, // 禁用底部状态栏
           toolbar: ['heading','bold', 'italic',  '|', 'code', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'image', '|', 'preview', '|', 'guide'],
           renderingConfig: {
@@ -55,6 +61,7 @@ export default {
   },
   mounted () {
     this.setContheight()
+    this.success = false
   },
   methods:{
     goPublish(){
@@ -73,6 +80,7 @@ export default {
             res => {
               that.title = ''
               that.content = ''
+              that.success = true
             },
             err => {
               console.log(err)
@@ -118,5 +126,9 @@ export default {
     margin-left: 10px;
     margin-right: 10px;
     width: 90%;
+  }
+  .markdown{
+      width: 90%;
+      margin-left: 5%;
   }
 </style>
