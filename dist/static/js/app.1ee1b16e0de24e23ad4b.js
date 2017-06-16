@@ -832,6 +832,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -839,7 +843,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   data() {
     return {
       loginkey: '',
-      err: ''
+      err: '',
+      details: false
     };
   },
   methods: {
@@ -855,6 +860,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         console.log('err');
         that.err = '登录口令输入有误,请重新输入';
       });
+    },
+    showDetails() {
+      this.details = !this.details;
     }
   }
 });
@@ -1104,6 +1112,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -1114,7 +1123,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   data() {
     return {
       msg: {},
-      activeTab: 'tab1'
+      activeTab: 'tab1',
+      dialog: false
     };
   },
   created() {
@@ -1141,7 +1151,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         console.log(err);
       });
     },
+    open() {
+      this.dialog = true;
+    },
+    close() {
+      this.dialog = false;
+    },
     logout() {
+      this.dialog = false;
       //将存储在localStorage里的口令清空
       localStorage.setItem('accesstoken', '');
       this.$router.push({
@@ -2620,8 +2637,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "sign-button",
     attrs: {
       "href": "https://www.vue-js.com/signup",
-      "label": "注册",
-      "primary": ""
+      "label": "注册"
     }
   }), _vm._v(" "), _c('mu-raised-button', {
     staticClass: "login-button",
@@ -2632,7 +2648,24 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.login
     }
-  })], 1), _vm._v(" "), _c('personal')], 1)
+  })], 1), _vm._v(" "), _c('div', {
+    staticClass: "tips",
+    on: {
+      "click": _vm.showDetails
+    }
+  }, [_c('p', [_vm._v("如何获取 Access Token ?")]), _vm._v(" "), _c('p', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.details),
+      expression: "details"
+    }],
+    staticClass: "detail"
+  }, [_vm._v("在"), _c('a', {
+    attrs: {
+      "href": "https://www.vue-js.com/"
+    }
+  }, [_vm._v("官网")]), _vm._v("注册登录后，可在设置页查看 Access Token")])]), _vm._v(" "), _c('personal')], 1)
 },staticRenderFns: []}
 
 /***/ }),
@@ -2839,9 +2872,31 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "primary": ""
     },
     on: {
-      "click": _vm.logout
+      "click": _vm.open
     }
-  }), _vm._v(" "), _c('personal')], 1)
+  }), _vm._v(" "), _c('mu-dialog', {
+    attrs: {
+      "open": _vm.dialog
+    }
+  }, [_vm._v("\n    确定退出么？\n    "), _c('mu-flat-button', {
+    attrs: {
+      "primary": "",
+      "label": "取消"
+    },
+    on: {
+      "click": _vm.close
+    },
+    slot: "actions"
+  }), _vm._v(" "), _c('mu-flat-button', {
+    attrs: {
+      "primary": "",
+      "label": "确定"
+    },
+    on: {
+      "click": _vm.logout
+    },
+    slot: "actions"
+  })], 1), _vm._v(" "), _c('personal')], 1)
 },staticRenderFns: []}
 
 /***/ }),
@@ -3052,4 +3107,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ })
 ],[28]);
-//# sourceMappingURL=app.da45ac26b351aa1a9ca0.js.map
+//# sourceMappingURL=app.1ee1b16e0de24e23ad4b.js.map
