@@ -1,5 +1,5 @@
 # vue-community
-重构vue中文社区
+重构vue中文社区（移动版）
 
 
 ## 技术栈
